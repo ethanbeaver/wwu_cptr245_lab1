@@ -1,6 +1,6 @@
 //=======================================================
 // Name: lab1.cpp
-// Author: ?
+// Author: Sheldon Woodward and Ethan Beaver
 // Course: CPTR245
 // Assignment: Lab 1
 // Description: Write the test cases and math expressions.
@@ -38,6 +38,8 @@ double quadratic(int a, int b, int c) {
 
 // Greatest Common Divisor (GCD).
 double gcd(int number1, int number2) {
+    number1 = abs(number1);
+    number2 = abs(number2);
     return number2 == 0 ? number1 : gcd(number2, number1 % number2);
 }
 
@@ -121,15 +123,19 @@ void parseStudentName(const string studentName, string& firstName, string& lastN
     for(int c = 0; c < userLastCount; c++) {
         username.push_back(char(tolower(lastName[c])));
     }
+    if(lastName.length() + firstName.length() < LAST_LENGTH + FIRST_LENGTH) {
+        for (int c = 0; c < LAST_LENGTH - userLastCount; c++) {
+            username.push_back('_');
+        }
+    }
     // add first name characters to username
     for(int c = 0; c < userFirstCount; c++) {
         username.push_back(char(tolower(firstName[c])));
     }
-
-    // fill all remaining spots with '_'
-    double usrLngth = username.length();
-    for(int c = 0; c < LAST_LENGTH + FIRST_LENGTH - usrLngth; c++) {
-        username.push_back('_');
+    if(lastName.length() + firstName.length() < LAST_LENGTH + FIRST_LENGTH) {
+        for (int c = 0; c < FIRST_LENGTH - userFirstCount; c++) {
+            username.push_back('_');
+        }
     }
 }
 
@@ -195,7 +201,7 @@ TEST_CASE("Student names are parsed", "[parseStudentName]") {
             // requirements
             REQUIRE(lastName == "Yip");
             REQUIRE(firstName == "U");
-            REQUIRE(userName == "yipu__");
+            REQUIRE(userName == "yip_u_");
         }
     }
     SECTION("Too many names") {
@@ -224,6 +230,8 @@ TEST_CASE("Student names are parsed", "[parseStudentName]") {
         REQUIRE(userName == "woodsh");
     }
 }
+
+// SQUARE ROOT TESTS
 TEST_CASE("Square roots are computed", "[squareRoot]") {
     SECTION("Passed perfect square") {
         // requirements
@@ -252,13 +260,21 @@ TEST_CASE("Square roots are computed", "[squareRoot]") {
     }
 }
 
+// GCD TESTS
 TEST_CASE("GCD is computed", "[gcd]") {
+    REQUIRE(gcd(0, 0) == 0);
+    REQUIRE(gcd(0, -1) == 1);
+    REQUIRE(gcd(-5, -8) == 1);
+    REQUIRE(gcd(-5, -15) == 5);
+    REQUIRE(gcd(-12, -14) == 2);
     REQUIRE(gcd(3, 6) == 3);
     REQUIRE(gcd(12, 12) == 12);
     REQUIRE(gcd(41, 400) == 1);
     REQUIRE(gcd(48, 120) == 24);
+    REQUIRE(gcd(-5, 5) == 5);
 }
 
+// DAY OF THE WEEK TESTS
 TEST_CASE( "Day of Week is computed", "[dayOfTheWeek]") {
     REQUIRE( dayOfTheWeek(10, 15, 2017) == "Sunday" );
     REQUIRE( dayOfTheWeek(12, 4, 456) == "Monday" );
